@@ -5,6 +5,8 @@ header('Access-Control-Allow-Origin: *');
 include_once(__DIR__ . '/../lib/doctype.php');
 
 if ($_FILES['xml'] && $_POST['schematron']) {
+    set_time_limit(300);
+
     $inputFile = $_FILES['xml']['tmp_name'];
 
     validateDoctypeIsSupported($inputFile);
