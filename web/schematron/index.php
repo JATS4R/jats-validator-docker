@@ -1,5 +1,7 @@
 <?php
 
+header('Access-Control-Allow-Origin: *');
+
 include_once(__DIR__ . '/../lib/doctype.php');
 
 $inputFile = $_FILES['xml']['tmp_name'];
@@ -67,7 +69,6 @@ if ($inputFile && $schematronFile) {
             ]
         ];
 
-        header('Access-Control-Allow-Origin: *');
         header('Content-Type: application/json');
         print json_encode($output, JSON_PRETTY_PRINT);
     } else {
@@ -81,7 +82,6 @@ if ($inputFile && $schematronFile) {
             ];
         }
 
-        header('Access-Control-Allow-Origin: *');
         header('Content-Type: application/json');
         print json_encode($errors, JSON_PRETTY_PRINT);
     }
