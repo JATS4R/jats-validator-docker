@@ -4,13 +4,12 @@ header('Access-Control-Allow-Origin: *');
 
 include_once(__DIR__ . '/../lib/doctype.php');
 
-$inputFile = $_FILES['xml']['tmp_name'];
-$schematronFile = $_POST['schematron'];
+if ($_FILES['xml'] && $_POST['schematron']) {
+    $inputFile = $_FILES['xml']['tmp_name'];
 
-if ($inputFile && $schematronFile) {
     validateDoctypeIsSupported($inputFile);
 
-    $schematronPath = __DIR__ . '/../' . $schematronFile . '.xsl'; // TODO: sanitise?
+    $schematronPath = __DIR__ . '/../' . $_POST['schematron'] . '.xsl'; // TODO: sanitise?
 
     $saxonProcessor = new Saxon\SaxonProcessor();
 
@@ -27,7 +26,8 @@ if ($inputFile && $schematronFile) {
 //        print $result;
 //
         $inputDoc = new DOMDocument();
-        $inputDoc->loadXML($inputFile, LIBXML_NONET | LIBXML_NOENT);
+        $inputDoc->load($inputFile, LIBXML_NONET | LIBXML_NOENT);
+        $inputXPath = new DOMXPath($inputDoc);
 
         $resultDoc = new DOMDocument();
         $resultDoc->loadXML($result, LIBXML_NONET | LIBXML_NOENT);
@@ -37,12 +37,17 @@ if ($inputFile && $schematronFile) {
 
         $errors = [];
         $warnings = [];
+//        $recoverableErrors = [];
 
         if ($asserts) {
             /** @var DOMElement $assert */
             foreach ($asserts as $assert) {
+                $inputNodes = $inputXPath->query($assert->getAttribute('location'));
+                /** @var DOMElement $inputNode */
+                $inputNode = $inputNodes[0];
+
                 $errors[] = [
-                    'line' => $assert->getLineNo(),
+                    'line' => $inputNode->getLineNo(),
                     'path' => $assert->getAttribute('location'),
                     'test' => $assert->getAttribute('test'),
                     'message' => trim($assert->textContent),
@@ -53,8 +58,12 @@ if ($inputFile && $schematronFile) {
         if ($reports) {
             /** @var DOMElement $report */
             foreach ($reports as $report) {
+                $inputNodes = $inputXPath->query($report->getAttribute('location'));
+                /** @var DOMElement $inputNode */
+                $inputNode = $inputNodes[0];
+
                 $errors[] = [
-                    'line' => $report->getLineNo(),
+                    'line' => $inputNode->getLineNo(),
                     'path' => $report->getAttribute('location'),
                     'test' => $report->getAttribute('test'),
                     'message' => trim($report->textContent),
@@ -69,6 +78,9 @@ if ($inputFile && $schematronFile) {
             ]
         ];
 
+        $processor->clearParameters();
+        $processor->clearProperties();
+
         header('Content-Type: application/json');
         print json_encode($output, JSON_PRETTY_PRINT);
     } else {
@@ -81,6 +93,8 @@ if ($inputFile && $schematronFile) {
                 'message' => $processor->getErrorMessage($i),
             ];
         }
+
+        $processor->exceptionClear();
 
         header('Content-Type: application/json');
         print json_encode($errors, JSON_PRETTY_PRINT);

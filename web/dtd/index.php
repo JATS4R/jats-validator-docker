@@ -4,9 +4,9 @@ header('Access-Control-Allow-Origin: *');
 
 include_once(__DIR__ . '/../lib/doctype.php');
 
-$inputFile = $_FILES['xml']['tmp_name'];
+if ($_FILES['xml']) {
+    $inputFile = $_FILES['xml']['tmp_name'];
 
-if ($inputFile) {
     libxml_use_internal_errors(true);
 
     validateDoctypeIsSupported($inputFile);
