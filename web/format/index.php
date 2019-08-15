@@ -13,5 +13,7 @@ if ($_FILES['xml']) {
     $doc->formatOutput = true;
     $doc->encoding = 'UTF-8';
 
+    header('Access-Control-Allow-Origin: *');
+    header('Content-Type: application/xml');
     print $doc->saveXML();
 }

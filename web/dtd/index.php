@@ -12,5 +12,7 @@ if ($_FILES['xml']) {
     // validate against the DTD
     $doc->load($_FILES['xml']['tmp_name'], LIBXML_DTDLOAD | LIBXML_DTDVALID | LIBXML_NONET);
 
+    header('Access-Control-Allow-Origin: *');
+    header('Content-Type: application/json');
     print json_encode(libxml_get_errors(), JSON_PRETTY_PRINT);
 }
