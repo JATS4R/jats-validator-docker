@@ -21,7 +21,7 @@ FROM hubdock/php7-apache-saxonhe
 RUN apt-get update && apt-get install -y httpry
 
 WORKDIR /dtds
-ARG DTDS_VERSION=0.0.4
+ARG DTDS_VERSION=0.0.5
 ENV DTDS_VERSION=${DTDS_VERSION}
 RUN curl -L https://github.com/JATS4R/jats-dtds/archive/v${DTDS_VERSION}.tar.gz | tar xvz
 ENV XML_CATALOG_FILES=/dtds/jats-dtds-${DTDS_VERSION}/schema/catalog.xml
