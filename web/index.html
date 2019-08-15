@@ -3,8 +3,28 @@
 <title>JATS4R Validator</title>
 
 <form method="post" enctype="multipart/form-data">
-    <label>XML: <input type="file" name="xml" accept="application/xml"></label>
+  <fieldset>
+    <legend>Input file</legend>
+    <input type="file" name="xml" accept="application/xml">
+  </fieldset>
+
+  <fieldset>
+    <legend>XML</legend>
     <button type="submit" formaction="/format/">Format</button>
+  </fieldset>
+
+  <fieldset>
+    <legend>DTD</legend>
     <button type="submit" formaction="/dtd/">Validate with DTD</button>
+  </fieldset>
+
+  <fieldset>
+    <legend>Schematron</legend>
+    <select name="schematron">
+      <option value="jats4r">JATS4R</option>
+      <option value="elife-pre">eLife pre</option>
+      <option value="elife-final">eLife final</option>
+    </select>
     <button type="submit" formaction="/schematron/">Validate with Schematron</button>
+  </fieldset>
 </form>
