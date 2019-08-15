@@ -94,9 +94,13 @@ if ($_FILES['xml'] && $_POST['schematron']) {
             ];
         }
 
+        $output = [
+            'errors' => $errors
+        ];
+
         $processor->exceptionClear();
 
         header('Content-Type: application/json');
-        print json_encode($errors, JSON_PRETTY_PRINT);
+        print json_encode($output, JSON_PRETTY_PRINT);
     }
 }
