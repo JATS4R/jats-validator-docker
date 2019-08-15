@@ -26,5 +26,11 @@ ENV DTDS_VERSION=${DTDS_VERSION}
 RUN curl -L https://github.com/JATS4R/jats-dtds/archive/v${DTDS_VERSION}.tar.gz | tar xvz
 ENV XML_CATALOG_FILES=/dtds/jats-dtds-${DTDS_VERSION}/schema/catalog.xml
 
-COPY web/ /var/www/html/
-COPY --from=builder /build/*.xsl /var/www/html/
+WORKDIR /var/www/html
+ARG VALIDATOR_COMMIT=6478d41363d70caaa7ba89218f3a19d7bbdc3cf8
+RUN curl https://raw.githubusercontent.com/elifesciences/schematron-validator/${VALIDATOR_COMMIT}/backend/schematron-validator-api/countries.xml -o countries.xml
+RUN curl https://raw.githubusercontent.com/elifesciences/schematron-validator/${VALIDATOR_COMMIT}/backend/schematron-validator-api/journal-DOI.xml -o journal-DOI.xml
+RUN curl https://raw.githubusercontent.com/elifesciences/schematron-validator/${VALIDATOR_COMMIT}/backend/schematron-validator-api/publisher-locations.xml -o publisher-locations.xml
+
+COPY web/ ./
+COPY --from=builder /build/*.xsl ./
