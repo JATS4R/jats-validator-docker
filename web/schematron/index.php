@@ -16,17 +16,23 @@ if ($_FILES['xml'] && $_POST['schematron']) {
     $saxonProcessor = new Saxon\SaxonProcessor();
 
     $catalog = getenv('XML_CATALOG_FILES');
+//    $saxonProcessor->setConfigurationProperty('http://saxon.sf.net/feature/timing', true);
     $saxonProcessor->setCatalog($catalog, true);
 
     $processor = $saxonProcessor->newXsltProcessor();
     $processor->setSourceFromFile($inputFile);
     $processor->compileFromFile($schematronPath);
+//    $processor->setParameter('phase', $saxonProcessor->createAtomicValue('warning'));
     $result = $processor->transformToString();
 
     if ($result) {
 //        header('Content-Type: application/xml');
 //        print $result;
-//
+
+        $errors = [];
+        $warnings = [];
+//        $recoverableErrors = [];
+
         $inputDoc = new DOMDocument();
         $inputDoc->load($inputFile, LIBXML_NONET | LIBXML_NOENT);
         $inputXPath = new DOMXPath($inputDoc);
@@ -37,10 +43,6 @@ if ($_FILES['xml'] && $_POST['schematron']) {
         $asserts = $resultXPath->query('svrl:failed-assert');
         $reports = $resultXPath->query('svrl:successful-report');
 
-        $errors = [];
-        $warnings = [];
-//        $recoverableErrors = [];
-
         if ($asserts) {
             /** @var DOMElement $assert */
             foreach ($asserts as $assert) {
@@ -48,12 +50,24 @@ if ($_FILES['xml'] && $_POST['schematron']) {
                 /** @var DOMElement $inputNode */
                 $inputNode = $inputNodes[0];
 
-                $errors[] = [
+                $data = [
                     'line' => $inputNode->getLineNo(),
                     'path' => $assert->getAttribute('location'),
                     'test' => $assert->getAttribute('test'),
+                    'type' => $assert->getAttribute('role'),
                     'message' => trim($assert->textContent),
                 ];
+
+                switch ($data['type']) {
+                    case 'error':
+                        $errors[] = $data;
+                        break;
+
+                    case 'warning':
+                    default:
+                        $warnings[] = $data;
+                        break;
+                }
             }
         }
 
@@ -64,12 +78,24 @@ if ($_FILES['xml'] && $_POST['schematron']) {
                 /** @var DOMElement $inputNode */
                 $inputNode = $inputNodes[0];
 
-                $errors[] = [
+                $data = [
                     'line' => $inputNode->getLineNo(),
                     'path' => $report->getAttribute('location'),
                     'test' => $report->getAttribute('test'),
+                    'type' => $report->getAttribute('role'),
                     'message' => trim($report->textContent),
                 ];
+
+                switch ($data['type']) {
+                    case 'error':
+                        $errors[] = $data;
+                        break;
+
+                    case 'warning':
+                    default:
+                        $warnings[] = $data;
+                        break;
+                }
             }
         }
 
