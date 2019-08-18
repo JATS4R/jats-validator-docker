@@ -16,6 +16,10 @@ if ($_FILES['xml']) {
     // validate against the DTD
     $doc->load($inputFile, LIBXML_DTDLOAD | LIBXML_DTDVALID | LIBXML_NONET);
 
+    $output = [
+        'errors' => libxml_get_errors()
+    ];
+
     header('Content-Type: application/json');
-    print json_encode(libxml_get_errors(), JSON_PRETTY_PRINT);
+    print json_encode($output, JSON_PRETTY_PRINT);
 }
