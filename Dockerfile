@@ -8,17 +8,15 @@ ARG JATS4R_SCHEMATRONS_VERSION=0.0.4
 RUN curl -L https://github.com/JATS4R/jats-schematrons/archive/v${JATS4R_SCHEMATRONS_VERSION}.tar.gz | tar xvz
 RUN php generate-xsl.php jats-schematrons-${JATS4R_SCHEMATRONS_VERSION}/schematrons/1.0/jats4r.sch jats4r.xsl
 
-ARG SCHEMATRONS_COMMIT=0d83948ee244fd8db297201bba1d7e2b8796c511
-RUN curl -L https://github.com/elifesciences/eLife-JATS-schematron/raw/${SCHEMATRONS_COMMIT}/pre-JATS-schematron.sch -o elife-schematron-pre.sch
+ARG SCHEMATRONS_COMMIT=eb8409ec19061eb6bf4488464b51deb84737ef28
+RUN curl -L https://github.com/elifesciences/eLife-JATS-schematron/raw/${SCHEMATRONS_COMMIT}/src/pre-JATS-schematron.sch -o elife-schematron-pre.sch
 RUN php generate-xsl.php elife-schematron-pre.sch elife-pre.xsl
 
-RUN curl -L https://github.com/elifesciences/eLife-JATS-schematron/raw/${SCHEMATRONS_COMMIT}/final-JATS-schematron.sch -o elife-schematron-final.sch
+RUN curl -L https://github.com/elifesciences/eLife-JATS-schematron/raw/${SCHEMATRONS_COMMIT}/src/final-JATS-schematron.sch -o elife-schematron-final.sch
 RUN php generate-xsl.php elife-schematron-final.sch elife-final.xsl
 
 # fetch the DTDs and copy the Schematron XSL files into place
 FROM hubdock/php7-apache-saxonhe
-
-RUN apt-get update && apt-get install -y httpry
 
 WORKDIR /dtds
 ARG DTDS_VERSION=0.0.5
@@ -32,5 +30,8 @@ RUN curl https://raw.githubusercontent.com/elifesciences/schematron-validator/${
 RUN curl https://raw.githubusercontent.com/elifesciences/schematron-validator/${VALIDATOR_COMMIT}/backend/schematron-validator-api/journal-DOI.xml -o journal-DOI.xml
 RUN curl https://raw.githubusercontent.com/elifesciences/schematron-validator/${VALIDATOR_COMMIT}/backend/schematron-validator-api/publisher-locations.xml -o publisher-locations.xml
 
+COPY cli/ ./
 COPY web/ ./
+COPY functions/ ../functions/
 COPY --from=builder /build/*.xsl ./
+

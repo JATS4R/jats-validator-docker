@@ -7,7 +7,7 @@ function validate_schematron($inputFile, $schematron) {
 
     validateDoctypeIsSupported($inputFile);
 
-    $schematronPath = __DIR__ . '/../' . $schematron . '.xsl'; // TODO: sanitise?
+    $schematronPath = __DIR__ . '/../html/' . $schematron . '.xsl'; // TODO: sanitise?
 
     $saxonProcessor = new Saxon\SaxonProcessor();
 
