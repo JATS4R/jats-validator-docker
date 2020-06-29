@@ -4,11 +4,11 @@ FROM hubdock/php7-apache-saxonhe AS builder
 WORKDIR /build
 COPY build ./
 
-ARG JATS4R_SCHEMATRONS_VERSION=0.0.4
+ARG JATS4R_SCHEMATRONS_VERSION=0.0.6
 RUN curl -L https://github.com/JATS4R/jats-schematrons/archive/v${JATS4R_SCHEMATRONS_VERSION}.tar.gz | tar xvz
 RUN php generate-xsl.php jats-schematrons-${JATS4R_SCHEMATRONS_VERSION}/schematrons/1.0/jats4r.sch jats4r.xsl
 
-ARG SCHEMATRONS_COMMIT=eb8409ec19061eb6bf4488464b51deb84737ef28
+ARG SCHEMATRONS_COMMIT=c9ed2c0c43a9b291155b6f4112b8325290f4c757
 RUN curl -L https://github.com/elifesciences/eLife-JATS-schematron/raw/${SCHEMATRONS_COMMIT}/src/pre-JATS-schematron.sch -o elife-schematron-pre.sch
 RUN php generate-xsl.php elife-schematron-pre.sch elife-pre.xsl
 
@@ -19,7 +19,7 @@ RUN php generate-xsl.php elife-schematron-final.sch elife-final.xsl
 FROM hubdock/php7-apache-saxonhe
 
 WORKDIR /dtds
-ARG DTDS_VERSION=0.0.5
+ARG DTDS_VERSION=0.0.6
 ENV DTDS_VERSION=${DTDS_VERSION}
 RUN curl -L https://github.com/JATS4R/jats-dtds/archive/v${DTDS_VERSION}.tar.gz | tar xvz
 ENV XML_CATALOG_FILES=/dtds/jats-dtds-${DTDS_VERSION}/schema/catalog.xml
