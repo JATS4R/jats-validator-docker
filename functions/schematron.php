@@ -15,11 +15,16 @@ function validate_schematron($inputFile, $schematron) {
 //    $saxonProcessor->setConfigurationProperty('http://saxon.sf.net/feature/timing', true);
     $saxonProcessor->setCatalog($catalog, true);
 
-    $processor = $saxonProcessor->newXsltProcessor();
-    $processor->setSourceFromFile($inputFile);
-    $processor->compileFromFile($schematronPath);
-//    $processor->setParameter('phase', $saxonProcessor->createAtomicValue('warning'));
-    $result = $processor->transformToString();
+    $processor = $saxonProcessor->newXslt30Processor();
+    $executable = $processor->compileFromFile($schematronPath);
+    $result = $executable->transformFileToString($inputFile);
+
+//    $processor->setSourceFromFile($inputFile);
+//    $processor->compileFromFile($schematronPath);
+////    $processor->setParameter('phase', $saxonProcessor->createAtomicValue('warning'));
+//    $result = $processor->transformToString();
+//    $result = $processor->transformFileToString($inputFile, $schematronPath);
+
 
     if ($result) {
 //        header('Content-Type: application/xml');
@@ -95,8 +100,8 @@ function validate_schematron($inputFile, $schematron) {
             }
         }
 
-        $processor->clearParameters();
-        $processor->clearProperties();
+//        $processor->clearParameters();
+//        $executable->clearProperties();
 
         return [
             'results' => [
@@ -106,16 +111,23 @@ function validate_schematron($inputFile, $schematron) {
         ];
     } else {
         $errors = [];
-        $errorCount = $processor->getExceptionCount();
+//        $errorCount = $processor->getExceptionCount();
+//
+//        for ($i = 0; $i < $errorCount; $i++) {
+//            $errors[] = [
+//                'code' => $processor->getErrorCode($i),
+//                'message' => $processor->getErrorMessage($i),
+//            ];
+//        }
 
-        for ($i = 0; $i < $errorCount; $i++) {
+        if($executable->exceptionOccurred()) {
             $errors[] = [
-                'code' => $processor->getErrorCode($i),
-                'message' => $processor->getErrorMessage($i),
+                'code' => $executable->getErrorCode(),
+                'message' => $executable->getErrorMessage(),
             ];
+            $processor->exceptionClear();
         }
 
-        $processor->exceptionClear();
 
         return [
             'errors' => $errors

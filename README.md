@@ -6,6 +6,6 @@ The Docker container runs an Apache web server listening on port 80, hosting a s
 
 ## Usage
 
-1. Build the Docker image: `docker build . --tag jats-validator --pull`
+1. Build the Docker image: `docker build . --platform linux/amd64 --tag jats-validator`
 1. Start the Docker container: `docker run --rm --publish 4000:80 --name jats-validator jats-validator`
 1. Open <http://localhost:4000/> and choose a JATS XML file to validate.
