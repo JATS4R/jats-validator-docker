@@ -18,4 +18,4 @@ docker run --rm --publish 4000:80 --name jats-validator jats-validator
 
 ## Deployment
 
-The web service is deployed to Cloud Run via a GitHub app, whenever the main branch updates.
+The web service is deployed to Cloud Run via GitHub Actions when the main branch updates.
