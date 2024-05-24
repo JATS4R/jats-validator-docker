@@ -20,7 +20,7 @@ RUN php generate-xsl.php elife-schematron-final.sch elife-final.xsl
 FROM hubdock/php7-apache-saxonhe:12.1
 
 WORKDIR /dtds
-ARG DTDS_VERSION=0.0.8
+ARG DTDS_VERSION=0.0.9
 ENV DTDS_VERSION=${DTDS_VERSION}
 RUN curl -L https://github.com/JATS4R/jats-dtds/archive/v${DTDS_VERSION}.tar.gz | tar xvz
 ENV XML_CATALOG_FILES=/dtds/jats-dtds-${DTDS_VERSION}/schema/catalog.xml
