@@ -25,6 +25,7 @@ function validate_schematron($inputFile, $schematron) {
 
         $errors = [];
         $warnings = [];
+        $infos = [];
 //        $recoverableErrors = [];
 
         $inputDoc = new DOMDocument();
@@ -57,6 +58,10 @@ function validate_schematron($inputFile, $schematron) {
                         $errors[] = $data;
                         break;
 
+                    case 'info':
+                        $infos[] = $data;
+                        break;
+
                     case 'warning':
                     default:
                         $warnings[] = $data;
@@ -85,6 +90,10 @@ function validate_schematron($inputFile, $schematron) {
                         $errors[] = $data;
                         break;
 
+                    case 'info':
+                        $infos[] = $data;
+                        break;
+
                     case 'warning':
                     default:
                         $warnings[] = $data;
@@ -99,6 +108,7 @@ function validate_schematron($inputFile, $schematron) {
         return [
             'results' => [
                 'errors' => $errors,
+                'infos' => $infos,
                 'warnings' => $warnings,
             ]
         ];
