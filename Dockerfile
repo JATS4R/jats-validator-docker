@@ -4,7 +4,7 @@ FROM hubdock/php7-apache-saxonhe:12.1 AS builder
 WORKDIR /build
 COPY build ./
 
-ARG JATS4R_SCHEMATRONS_VERSION=0.0.15
+ARG JATS4R_SCHEMATRONS_VERSION=0.0.16
 RUN curl -L https://github.com/JATS4R/jats-schematrons/archive/v${JATS4R_SCHEMATRONS_VERSION}.tar.gz | tar xvz
 RUN php generate-xsl.php jats-schematrons-${JATS4R_SCHEMATRONS_VERSION}/schematrons/1.0/jats4r.sch jats4r.xsl
 RUN cp jats-schematrons-${JATS4R_SCHEMATRONS_VERSION}/schematrons/1.0/*.xml .
