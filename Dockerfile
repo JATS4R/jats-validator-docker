@@ -1,5 +1,5 @@
 # build the Schematron XSL files from the Schematron source files
-FROM hubdock/php7-apache-saxonhe:12.1 AS builder
+FROM docker.io/hubdock/php7-apache-saxonhe:12.1 AS builder
 
 WORKDIR /build
 COPY build ./
@@ -17,7 +17,7 @@ RUN curl -L https://github.com/elifesciences/eLife-JATS-schematron/raw/${SCHEMAT
 RUN php generate-xsl.php elife-schematron-final.sch elife-final.xsl
 
 # fetch the DTDs and copy the Schematron XSL files into place
-FROM hubdock/php7-apache-saxonhe:12.1
+FROM docker.io/hubdock/php7-apache-saxonhe:12.1
 
 WORKDIR /dtds
 ARG DTDS_VERSION=0.0.9
